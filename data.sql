@@ -64,3 +64,13 @@ INSERT INTO collections (name, release_year) VALUES
 
 INSERT INTO collection_track (collection_id, track_id) VALUES 
 (1,1), (1,3), (2,2), (2,7), (3,5), (3,6), (4,9);
+
+SELECT '1. Длиннейший:' as check, name, duration FROM tracks ORDER BY duration DESC LIMIT 1;
+
+SELECT '2. ≥3:30:' as check, name, duration FROM tracks WHERE duration >= 210;
+
+SELECT '3. 2018-2020:' as check, name FROM collections WHERE release_year BETWEEN 2018 AND 2020;
+
+SELECT '4. 1 слово:' as check, name FROM artists WHERE name NOT LIKE '% %';
+
+SELECT '5. my:' as check, name FROM tracks WHERE name ILIKE '%my%';
