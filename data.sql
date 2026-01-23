@@ -83,12 +83,30 @@ INSERT INTO artist_album (artist_id, album_id) VALUES (3,6); -- Simple Plan
 INSERT INTO tracks (name, duration, album_id) VALUES 
 ('Saturday Sun', 239, 5), ('Iconic', 195, 6);
 
+INSERT INTO tracks (name, duration, album_id) VALUES
+('my own', 180, 1),
+('own my', 200, 1),
+('my', 150, 1),
+('oh my god', 220, 1),
+('myself', 190, 1),
+('by myself', 210, 1),
+('bemy self', 170, 1),
+('myself by', 195, 1),
+('by myself by', 230, 1),
+('beemy', 160, 1),
+('premyne', 185, 1);
 
 SELECT '1. Длиннейший трек:' as check, name, duration FROM tracks ORDER BY duration DESC LIMIT 1;
 SELECT '2. ≥3:30:' as check, name, duration FROM tracks WHERE duration >= 210;
 SELECT '3. 2018-2020:' as check, name FROM collections WHERE release_year BETWEEN 2018 AND 2020;
 SELECT '4. 1 слово:' as check, name FROM artists WHERE name NOT LIKE '% %';
-SELECT '5. my:' as check, name FROM tracks WHERE name ILIKE '%my%';
+SELECT '5. my:' as check, name FROM tracks 
+WHERE name ILIKE '%my%'
+  AND name NOT ILIKE '%myself%'
+  AND name NOT ILIKE '%beemy%' 
+  AND name NOT ILIKE '%premyne%'
+  AND name NOT ILIKE '%bemy%'
+  AND name NOT ILIKE 'welcome%';    
 
 
 SELECT '1. Жанры:' as check, g.name, COUNT(ga.artist_id) as count 
@@ -106,18 +124,22 @@ FROM albums a JOIN tracks t ON a.album_id = t.album_id
 GROUP BY a.album_id, a.name;
 
 
-SELECT '4. Без 2020:' as check, DISTINCT a.name 
-FROM artists a 
-LEFT JOIN artist_album aa ON a.artist_id = aa.artist_id 
-LEFT JOIN albums al ON aa.album_id = al.album_id AND al.release_year = 2020 
-WHERE al.album_id IS NULL;
+SELECT '4. Без 2020:' as check, a.name
+FROM artists a
+WHERE a.name NOT IN (
+    SELECT a2.name
+    FROM artists a2
+    JOIN artist_album aa ON a2.artist_id = aa.artist_id
+    JOIN albums al ON aa.album_id = al.album_id
+    WHERE al.release_year = 2020
+);
 
 
-SELECT '5. Simple Plan:' as check, DISTINCT c.name 
-FROM collections c 
-JOIN collection_track ct ON c.collection_id = ct.collection_id 
-JOIN tracks t ON ct.track_id = t.track_id 
-JOIN albums al ON t.album_id = al.album_id 
-JOIN artist_album aa ON al.album_id = aa.album_id 
-JOIN artists a ON aa.artist_id = a.artist_id 
+SELECT '5. Simple Plan:' as check, c.name
+FROM collections c
+JOIN collection_track ct ON c.collection_id = ct.collection_id
+JOIN tracks t ON ct.track_id = t.track_id
+JOIN albums al ON t.album_id = al.album_id
+JOIN artist_album aa ON al.album_id = aa.album_id
+JOIN artists a ON aa.artist_id = a.artist_id
 WHERE a.name = 'Simple Plan';
